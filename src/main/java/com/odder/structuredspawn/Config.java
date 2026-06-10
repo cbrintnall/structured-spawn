@@ -19,6 +19,7 @@ public class Config {
 
     public static final ModConfigSpec.ConfigValue<Boolean> ON_JOIN = BUILDER.comment("Should randomize run on first join").define("on_join", true);
     public static final ModConfigSpec.ConfigValue<Boolean> ON_SPAWN = BUILDER.comment("Should randomize run on each spawn").define("on_spawn", false);
+    public static final ModConfigSpec.ConfigValue<Boolean> RESPECT_BED = BUILDER.comment("If on spawn is enabled, should it prioritize bed spawn over randomized").define("respectBed", true);
     public static final ModConfigSpec.ConfigValue<Integer> SEARCH_RADIUS = BUILDER.comment("How far we should search for a structure before giving up").define("searchRadius", 100);
 
     static final ModConfigSpec SPEC = BUILDER.build();

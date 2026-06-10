@@ -14,7 +14,10 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.slf4j.Logger;
 
@@ -31,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(StructuredSpawn.MODID)
 public class StructuredSpawn {
     public static final String MODID = "structuredspawn";
@@ -46,11 +48,23 @@ public class StructuredSpawn {
 
         NeoForge.EVENT_BUS.addListener(StructuredSpawn::onPlayerJoined);
         NeoForge.EVENT_BUS.addListener(StructuredSpawn::onPlayerSpawned);
+
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            modContainer.registerExtensionPoint(
+                IConfigScreenFactory.class,
+                ConfigurationScreen::new
+            );
+        }
     }
 
     private static void onPlayerSpawned(PlayerEvent.PlayerRespawnEvent event) {
         if (!Config.ON_SPAWN.get()) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        if (Config.RESPECT_BED.get() && player.getRespawnPosition() != null) {
+            LOGGER.info("Player {} has a bed and respect bed is on, skipping randomize spawn.", player.getName());
+            return;
+        }
 
         StructuredSpawn.LOGGER.info("Running structured spawn for ON_SPAWN, for player {}", player.getName());
 
