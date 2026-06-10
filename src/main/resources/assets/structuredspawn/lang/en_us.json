@@ -1,0 +1,9 @@
+{
+  "structuredspawn.configuration.title": "StructuredSpawn Configs",
+  "structuredspawn.configuration.section.structuredspawn.common.toml": "StructuredSpawn Configs",
+  "structuredspawn.configuration.section.structuredspawn.common.toml.title": "StructuredSpawn Configs",
+
+  "structuredspawn.configuration.on_join": "On Join",
+  "structuredspawn.configuration.on_spawn": "On Spawn",
+  "structuredspawn.configuration.searchRadius": "Search Radius"
+}
