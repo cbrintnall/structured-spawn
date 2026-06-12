@@ -40,7 +40,6 @@ public class StructuredSpawn {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final TagKey<Structure> ON_JOIN = TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(MODID, "on_join"));
-
     public static final TagKey<Structure> ON_SPAWN = TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(MODID, "on_spawn"));
 
     public StructuredSpawn(IEventBus modEventBus, ModContainer modContainer) {
@@ -92,6 +91,10 @@ public class StructuredSpawn {
 
         BlockPos searchCenter = new BlockPos((level.random.nextInt(20000)) - 10000, 64, (level.random.nextInt(20000)) - 10000);
 
+        if (Config.SEARCH_FROM_SPAWN.get()) {
+            searchCenter = player.getRespawnPosition();
+        }
+
         Pair<BlockPos, Holder<Structure>> found = level.getChunkSource().getGenerator().findNearestMapStructure(level, HolderSet.direct(chosen), searchCenter, Config.SEARCH_RADIUS.get(), false);
 
         if (found != null) {
@@ -101,14 +104,12 @@ public class StructuredSpawn {
             int safeY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
             player.teleportTo(level, pos.getX() + 0.5, safeY, pos.getZ() + 0.5, player.getYRot(), player.getXRot());
         } else {
-            StructuredSpawn.LOGGER.info("Failed to find structure, can't teleport!!");
+            StructuredSpawn.LOGGER.info("Failed to find structure, for respawn.. Try increasing search radius or unchecking search from spawn.");
         }
     }
 
     private static List<Holder<Structure>> resolveStructurePool(ServerLevel level, TagKey<Structure> key) {
         Registry<Structure> registry = level.registryAccess().registryOrThrow(Registries.STRUCTURE);
-
-        LOGGER.info("Known structure tags: {}", registry.getTags().map(pair -> pair.getFirst().location().toString()).collect(Collectors.joining(", ")));
 
         List<Holder<Structure>> resolved = new ArrayList<>();
         registry.getTagOrEmpty(key).forEach(resolved::add);
